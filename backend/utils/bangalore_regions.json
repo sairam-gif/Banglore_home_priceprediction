@@ -1,0 +1,63 @@
+{
+  "metadata": {
+    "total_locations": 302,
+    "city": "Bangalore",
+    "country": "India",
+    "center": {
+      "latitude": 12.9716,
+      "longitude": 77.5946
+    }
+  },
+  "regions": {
+    "south": {
+      "name": "South Bangalore",
+      "bounds": {
+        "north": 12.8,
+        "south": 12.6,
+        "east": 77.7,
+        "west": 77.5
+      },
+      "key_locations": ["Bannerghatta", "Electronic City", "Sarjapur", "Bommasandra", "Jigani", "Attibele"]
+    },
+    "north": {
+      "name": "North Bangalore",
+      "bounds": {
+        "north": 13.2,
+        "south": 12.95,
+        "east": 77.65,
+        "west": 77.3
+      },
+      "key_locations": ["Yelahanka", "Hebbal", "Yeshwantpur", "Malleswaram", "Bagalur", "Devanahalli"]
+    },
+    "east": {
+      "name": "East Bangalore",
+      "bounds": {
+        "north": 12.95,
+        "south": 12.8,
+        "east": 77.75,
+        "west": 77.6
+      },
+      "key_locations": ["Whitefield", "Marathahalli", "Bellandur", "Kadugodi", "Varthur", "Sarjapur Road"]
+    },
+    "west": {
+      "name": "West Bangalore",
+      "bounds": {
+        "north": 12.95,
+        "south": 12.8,
+        "east": 77.55,
+        "west": 77.3
+      },
+      "key_locations": ["Basavanagudi", "Tumkur Road", "Dasarahalli", "Kengeri", "Subramanyapura"]
+    },
+    "central": {
+      "name": "Central Bangalore",
+      "bounds": {
+        "north": 12.95,
+        "south": 12.8,
+        "east": 77.65,
+        "west": 77.55
+      },
+      "key_locations": ["JP Nagar", "Koramangala", "BTM Layout", "HSR Layout", "Jayanagar", "Indiranagar"]
+    }
+  }
+}
