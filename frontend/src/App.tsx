@@ -1,9 +1,11 @@
 // frontend/src/App.tsx
 
-import React, { useState, useEffect, useMemo, useRef } from 'react'; // Added useRef
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import SearchPanel from './components/SearchPanel';
 import TopStats from './components/TopStats';
 import { LocationMap } from './LocationMap';
+import { InsightsDashboard } from './pages/InsightsDashboard';
 import axios from 'axios';
 
 // Define a type for the filtered property data received from the backend
@@ -18,15 +20,15 @@ interface FilteredProperty {
   recommendation_score: number;
 }
 
-function App() {
+function MainApp() {
   const [filteredProperties, setFilteredProperties] = useState<FilteredProperty[]>([]);
   const [selectedLocationName, setSelectedLocationName] = useState<string>('');
   const [availableLocations, setAvailableLocations] = useState<string[]>([]);
-  const [loadingLocations, setLoadingLocations] = useState<boolean>(true); // New loading state for initial fetch
-  const [visibleCount, setVisibleCount] = useState<number>(10); // Initial visible count set to 10
-  const mapRef = useRef<HTMLDivElement>(null); // Ref for map container
+  const [loadingLocations, setLoadingLocations] = useState<boolean>(true);
+  const [visibleCount, setVisibleCount] = useState<number>(10);
+  const mapRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
-  // Fetch available locations from backend on component mount
   useEffect(() => {
     const fetchLocations = async () => {
       try {
@@ -35,20 +37,18 @@ function App() {
       } catch (error) {
         console.error('Error fetching locations:', error);
       } finally {
-        setLoadingLocations(false); // Set loading to false after fetch attempt
+        setLoadingLocations(false);
       }
     };
     fetchLocations();
   }, []);
 
-  // Default map center and zoom for Bangalore
   const defaultMapCenter: [number, number] = [12.9716, 77.5946];
   const defaultMapZoom: number = 11;
 
-  // This function will be passed to SearchPanel to receive filtered data
   const handleSearchSubmit = (data: FilteredProperty[]) => {
     setFilteredProperties(data);
-    setVisibleCount(10); // Reset visible count on new search
+    setVisibleCount(10);
     if (data.length > 0) {
       setSelectedLocationName(data[0].location_name);
     } else {
@@ -56,7 +56,6 @@ function App() {
     }
   };
 
-  // Transform filteredProperties for LocationMap consumption
   const mapReadyLocationData = useMemo(() => {
     return filteredProperties.map(prop => ({
       name: prop.location_name,
@@ -64,14 +63,12 @@ function App() {
       lon: prop.longitude,
       avgPrice: prop.predicted_price,
       pricePerSqft: prop.predicted_price / prop.area_sqft,
-      bhk: prop.bhk, // Pass BHK to map
+      bhk: prop.bhk,
     }));
   }, [filteredProperties]);
 
-  // Handle recommendation click
   const handleRecommendationClick = (locationName: string) => {
     setSelectedLocationName(locationName);
-    // Scroll to map
     if (mapRef.current) {
       mapRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -80,8 +77,6 @@ function App() {
   const handleShowMore = () => {
     setVisibleCount(prev => prev + 10);
   };
-
-  // Calculate top stats from filteredProperties
 
   const stats = useMemo(() => {
     if (filteredProperties.length === 0) {
@@ -92,22 +87,17 @@ function App() {
         bestROI: { name: 'N/A', score: 0 },
       };
     }
-
     const totalPrices = filteredProperties.reduce((sum, prop) => sum + prop.predicted_price, 0);
     const avgPrice = totalPrices / filteredProperties.length;
-
     const cheapest = filteredProperties.reduce((minProp, currentProp) =>
       currentProp.predicted_price < minProp.predicted_price ? currentProp : minProp
     );
-
     const premium = filteredProperties.reduce((maxProp, currentProp) =>
       currentProp.predicted_price > maxProp.predicted_price ? currentProp : maxProp
     );
-
     const bestRecommendation = filteredProperties.reduce((bestProp, currentProp) =>
       currentProp.recommendation_score > bestProp.recommendation_score ? currentProp : bestProp
     );
-
     return {
       averagePrice: Math.round(avgPrice),
       cheapestArea: { name: cheapest.location_name, price: Math.round(cheapest.predicted_price) },
@@ -122,6 +112,14 @@ function App() {
         <h1 className="text-5xl md:text-6xl font-black font-display text-on-surface mb-4 tracking-tighter">
           Bangalore <span className="text-brand-blue">Real Estate</span> Analytics
         </h1>
+        <div className="flex gap-4 justify-center mb-6">
+            <button 
+                onClick={() => navigate('/insights')}
+                className="px-6 py-3 bg-brand-blue text-white rounded-xl shadow-lg hover:bg-blue-700 transition"
+            >
+                Smart Insights Dashboard
+            </button>
+        </div>
         <div className="w-24 h-1.5 bg-brand-blue mx-auto rounded-full opacity-20"></div>
         <p className="mt-6 text-slate-500 text-lg font-medium max-w-2xl mx-auto">
           Predicting the future of urban living with data-driven precision.
@@ -129,26 +127,11 @@ function App() {
       </header>
 
       <main className="max-w-8xl mx-auto flex flex-col lg:grid lg:grid-cols-12 gap-10 items-start">
-        {/* Sidebar: Search & Stats */}
-        {/* <aside className="w-full lg:col-span-4 flex flex-col gap-10 sticky top-12 animate-reveal-up stagger-1">
-          <SearchPanel onSearchSubmit={handleSearchSubmit} availableLocations={availableLocations} />
-          <TopStats {...stats} />
-        </aside> */}
-
-        {/* <div className="w-24 h-1.5 bg-brand-blue mx-auto rounded-full opacity-20"></div>
-        <p className="mt-6 text-slate-500 text-lg font-medium max-w-2xl mx-auto">
-          Predicting the future of urban living with data-driven precision.
-        </p> */}
-      </main>
-
-      <main className="max-w-8xl mx-auto flex flex-col lg:grid lg:grid-cols-12 gap-10 items-start">
-        {/* Sidebar: Search & Stats */}
         <aside className="w-full lg:col-span-4 flex flex-col gap-10 sticky top-12 animate-reveal-up stagger-1">
           <SearchPanel onSearchSubmit={handleSearchSubmit} availableLocations={availableLocations} />
           <TopStats {...stats} />
         </aside>
 
-        {/* Content: Map & Recommendations */}
         <div className="w-full lg:col-span-8 flex flex-col gap-10">
           <section className="animate-reveal-up stagger-2" ref={mapRef}>
             {loadingLocations ? (
@@ -212,7 +195,6 @@ function App() {
                           ROI SCORE: {Math.round(prop.recommendation_score)}
                         </span>
                       </div>
-                      
                       <div className="space-y-4">
                         <div>
                           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Projected Investment</span>
@@ -220,65 +202,27 @@ function App() {
                             ₹{prop.predicted_price.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
                           </p>
                         </div>
-
-                        <div className="grid grid-cols-2 gap-4 py-4 border-y border-outline/50">
-                          <div>
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Configuration</span>
-                            <p className="font-bold text-slate-700 flex items-center gap-1.5 mt-0.5">
-                              {prop.bhk === 1 ? '🏠' : prop.bhk === 2 ? '🏡' : prop.bhk === 3 ? '🏢' : '🏰'} {prop.bhk} BHK
-                            </p>
-                          </div>
-                          <div>
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Unit Size</span>
-                            <p className="font-bold text-slate-700 mt-0.5">{prop.area_sqft.toLocaleString('en-IN')} <span className="text-slate-400 text-xs font-medium">sq.ft</span></p>
-                          </div>
-                        </div>
-
-                        <div className="flex justify-between items-center pt-2">
-                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Avg. Rate</span>
-                          <span className="text-brand-blue font-black tracking-tight">
-                            ₹{Math.round(prop.predicted_price / prop.area_sqft).toLocaleString('en-IN')}<span className="text-[10px] ml-0.5">/ft</span>
-                          </span>
-                        </div>
                       </div>
                     </div>
-
-                    {prop.amenities.length > 0 && (
-                      <div className="mt-6 flex flex-wrap gap-1.5">
-                        {prop.amenities.slice(0, 4).map((amenity, idx) => (
-                          <span key={idx} className="px-2 py-1 bg-surface text-slate-500 text-[9px] font-bold rounded uppercase tracking-wider border border-outline">
-                            {amenity}
-                          </span>
-                        ))}
-                        {prop.amenities.length > 4 && (
-                          <span className="px-2 py-1 text-slate-300 text-[9px] font-bold uppercase tracking-wider">
-                            +{prop.amenities.length - 4} more
-                          </span>
-                        )}
-                      </div>
-                    )}
                   </div>
                 ))}
               </div>
-
-              {visibleCount < filteredProperties.length && (
-                <div className="mt-12 flex justify-center">
-                  <button
-                    onClick={handleShowMore}
-                    className="px-12 py-5 bg-on-surface text-white font-bold rounded-2xl 
-                               shadow-elevated hover:bg-brand-blue transition-all duration-300 
-                               transform hover:-translate-y-1 active:scale-95
-                               cursor-pointer text-sm uppercase tracking-widest"
-                  >
-                    View More Analysis
-                  </button>
-                </div>
-              )}
             </section>
           )}
         </div>
       </main>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<MainApp />} />
+        <Route path="/insights" element={<InsightsDashboard />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
