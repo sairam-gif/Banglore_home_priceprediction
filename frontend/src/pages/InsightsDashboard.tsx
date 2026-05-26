@@ -7,80 +7,85 @@ import { BestAreaSection } from '../components/BestAreaSection';
 import { InvestmentSection } from '../components/InvestmentSection';
 import { PriceAnalyzerSection } from '../components/PriceAnalyzerSection';
 import { MetricInsights } from '../components/MetricInsights';
+import { PredictionResult } from '../components/PredictionResult'; // Import new component
 
 export const InsightsDashboard = () => {
   const navigate = useNavigate();
   const [activeResult, setActiveResult] = useState<React.ReactNode>(null);
   const portalRef = useRef<HTMLDivElement>(null);
 
-  const handleResultUpdate = (res: React.ReactNode) => {
-    setActiveResult(res);
-    // Delay scroll slightly to allow React to render the new content
+  const handleResultUpdate = (type: 'investment' | 'price', res: React.ReactNode) => {
+    // Wrap the tool-specific result component with the common PredictionResult styling
+    setActiveResult(<PredictionResult type={type} data={res} />);
     setTimeout(() => {
         portalRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
   };
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen bg-slate-50 text-slate-900">
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 px-8 py-6 flex justify-between items-center">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen bg-surface p-12 lg:p-20">
+      <header className="max-w-[1400px] mx-auto mb-16 flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-black tracking-tighter">Analytics Hub</h1>
-          <p className="text-slate-500 font-medium text-sm">Strategic Real Estate Intelligence</p>
+          <h1 className="text-6xl font-display font-black text-on-surface tracking-tighter">
+            Insights <span className="text-brand-blue">Dashboard</span>
+          </h1>
+          <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.25em] mt-4">Strategic Real Estate Intelligence</p>
         </div>
-        <button onClick={() => navigate('/')} className="flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white rounded-xl shadow-lg hover:bg-slate-800 transition-all font-semibold text-sm">
-          <ArrowLeft size={16} /> Dashboard Home
+        <button 
+            onClick={() => navigate('/')} 
+            className="px-8 py-4 bg-on-surface text-white rounded-2xl font-black text-[12px] uppercase tracking-[0.2em] hover:bg-brand-blue transition-all duration-500"
+        >
+          <ArrowLeft size={16} className="inline mr-2" /> Back
         </button>
       </header>
 
-      <main className="max-w-7xl mx-auto p-8 space-y-10">
-        <section className="grid lg:grid-cols-2 gap-8">
-            <div className="bg-white p-10 rounded-3xl shadow-sm border border-slate-100">
-               <div className="flex items-center gap-4 mb-8">
-                 <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl"><MapPin size={24} /></div>
-                 <h2 className="text-3xl font-extrabold tracking-tight">Market Scout</h2>
-               </div>
-               <BestAreaSection />
+      <main className="max-w-[1400px] mx-auto grid grid-cols-12 gap-8 items-start">
+        {/* Full Width Scout */}
+        <section className="col-span-12 bg-white p-12 rounded-3xl border border-outline shadow-sm">
+            <div className="flex items-center gap-4 mb-10">
+                <div className="p-3 bg-surface border border-outline rounded-2xl"><MapPin size={24} className="text-brand-blue" /></div>
+                <h2 className="text-3xl font-display font-black tracking-tighter">Market Scout</h2>
             </div>
+            <BestAreaSection />
+        </section>
             
-            <div className="flex flex-col gap-8">
-                <div className="bg-white p-10 rounded-3xl shadow-sm border border-slate-100 flex-1">
-                   <div className="flex items-center gap-4 mb-8">
-                     <div className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl"><ShieldCheck size={24} /></div>
-                     <h2 className="text-3xl font-extrabold tracking-tight">Investment Score</h2>
-                   </div>
-                   <InvestmentSection onResult={handleResultUpdate} />
-                </div>
-                <div className="bg-white p-10 rounded-3xl shadow-sm border border-slate-100 flex-1">
-                   <div className="flex items-center gap-4 mb-8">
-                     <div className="p-3 bg-teal-50 text-teal-600 rounded-2xl"><BarChart3 size={24} /></div>
-                     <h2 className="text-3xl font-extrabold tracking-tight">Price Analyzer</h2>
-                     </div>
-                   <PriceAnalyzerSection onResult={handleResultUpdate} />
-                </div>
+        {/* Half Width Analyzers (Side by Side) */}
+        <section className="col-span-12 lg:col-span-6 bg-white p-10 rounded-3xl border border-outline shadow-sm">
+            <div className="flex items-center gap-4 mb-8">
+                <div className="p-3 bg-surface border border-outline rounded-2xl"><ShieldCheck size={24} className="text-brand-blue" /></div>
+                <h2 className="text-2xl font-display font-black tracking-tighter">Investment Analysis</h2>
             </div>
+            <InvestmentSection onResult={handleResultUpdate} />
+        </section>
+        
+        <section className="col-span-12 lg:col-span-6 bg-white p-10 rounded-3xl border border-outline shadow-sm">
+            <div className="flex items-center gap-4 mb-8">
+                <div className="p-3 bg-surface border border-outline rounded-2xl"><BarChart3 size={24} className="text-brand-blue" /></div>
+                <h2 className="text-2xl font-display font-black tracking-tighter">Price Valuation</h2>
+            </div>
+            <PriceAnalyzerSection onResult={handleResultUpdate} />
         </section>
 
-        {/* Centralized Result Portal */}
-        <section ref={portalRef} className="w-full min-h-[400px] bg-slate-950 rounded-3xl p-10 text-white shadow-2xl transition-all duration-500">
-            <h3 className="text-xl font-black mb-8 flex items-center gap-3 text-slate-400 uppercase tracking-widest text-sm">
-                Live Diagnostic Results
-            </h3>
+        {/* Full Width Result Portal */}
+        <section ref={portalRef} className="col-span-12 p-12">
+            <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.25em] mb-12">Live Diagnostic Results</h3>
             <AnimatePresence mode="wait">
                 {activeResult ? (
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
                         {activeResult}
                     </motion.div>
                 ) : (
-                    <div className="h-64 flex flex-col items-center justify-center text-slate-600">
-                        <p className="font-bold text-xl">Select a tool to begin your diagnostic</p>
-                        <p className="text-sm">Real-time analysis results will appear here</p>
+                    <div className="h-64 flex flex-col items-center justify-center bg-white rounded-3xl border border-outline shadow-sm">
+                        <p className="font-display font-black text-2xl text-on-surface">Analysis Pending</p>
+                        <p className="text-[10px] uppercase tracking-[0.25em] mt-3">Select a tool to view detailed results</p>
                     </div>
                 )}
             </AnimatePresence>
         </section>
 
-        <MetricInsights />
+        <section className="col-span-12">
+            <MetricInsights />
+        </section>
       </main>
     </motion.div>
   );

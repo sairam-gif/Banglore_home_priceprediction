@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Loader2, Banknote, Maximize, Home, Zap } from 'lucide-react';
 
-// Reusable Input Component (Redesigned)
 const InputField: React.FC<{
   label: string;
   id: string;
@@ -13,12 +12,12 @@ const InputField: React.FC<{
   error?: string;
   icon: React.ElementType;
 }> = ({ label, id, type, value, onChange, placeholder, error, icon: Icon }) => (
-  <div className="mb-6">
-    <div className="flex items-center gap-2 mb-2">
-      <div className="p-1.5 rounded-lg bg-slate-50 border border-slate-100">
-        <Icon className="w-3.5 h-3.5 text-slate-500" />
+  <div className="mb-8">
+    <div className="flex items-center gap-3 mb-3">
+      <div className="p-2 rounded-xl bg-surface border border-outline">
+        <Icon className="w-4 h-4 text-brand-blue" />
       </div>
-      <label htmlFor={id} className="text-[11px] font-black text-slate-400 uppercase tracking-widest">
+      <label htmlFor={id} className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">
         {label}
       </label>
     </div>
@@ -29,17 +28,16 @@ const InputField: React.FC<{
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className={`w-full p-4 bg-slate-50 border rounded-2xl focus:outline-none focus:ring-2 
-                    text-slate-900 font-bold placeholder:text-slate-300 placeholder:font-medium
-                    ${error ? 'border-brand-rose focus:ring-brand-rose/20' : 'border-slate-100 focus:ring-brand-blue/20'}
-                    transition-all duration-300 group-hover:bg-white group-hover:border-slate-200`}
+        className={`w-full p-5 bg-white border rounded-2xl focus:outline-none focus:ring-1 
+                    text-on-surface font-display font-medium text-lg placeholder:text-slate-300
+                    ${error ? 'border-brand-rose focus:ring-brand-rose' : 'border-outline focus:ring-brand-blue'}
+                    transition-all duration-500 shadow-sm`}
       />
-      {error && <p className="mt-2 text-[10px] font-bold text-brand-rose uppercase tracking-wide px-1">{error}</p>}
+      {error && <p className="mt-2 text-[9px] font-bold text-brand-rose uppercase tracking-widest px-1">{error}</p>}
     </div>
   </div>
 );
 
-// Reusable Checkbox Group Component (Redesigned)
 const CheckboxGroup: React.FC<{
   label: string;
   options: { value: string; label: string }[];
@@ -47,25 +45,25 @@ const CheckboxGroup: React.FC<{
   onChange: (value: string) => void;
   icon: React.ElementType;
 }> = ({ label, options, selected, onChange, icon: Icon }) => (
-  <div className="mb-8">
-    <div className="flex items-center gap-2 mb-4 px-1">
-      <div className="p-1.5 rounded-lg bg-slate-50 border border-slate-100">
-        <Icon className="w-3.5 h-3.5 text-slate-500" />
+  <div className="mb-10">
+    <div className="flex items-center gap-3 mb-6 px-1">
+      <div className="p-2 rounded-xl bg-surface border border-outline">
+        <Icon className="w-4 h-4 text-brand-blue" />
       </div>
-      <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest">
+      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">
         {label}
       </label>
     </div>
-    <div className="grid grid-cols-2 gap-2">
+    <div className="grid grid-cols-2 gap-3">
       {options.map((option) => (
         <button
           key={option.value}
           type="button"
           onClick={() => onChange(option.value)}
-          className={`p-3 rounded-xl border text-[13px] font-bold transition-all duration-300 flex items-center justify-center gap-2
+          className={`p-4 rounded-xl border text-[12px] font-bold transition-all duration-300 flex items-center justify-center gap-2
                     ${selected.includes(option.value) 
-                      ? 'bg-brand-blue border-brand-blue text-white shadow-elevated scale-[1.02]' 
-                      : 'bg-white border-slate-100 text-slate-500 hover:border-slate-200 hover:bg-slate-50'}`}
+                      ? 'bg-brand-blue border-brand-blue text-white shadow-lg' 
+                      : 'bg-white border-outline text-slate-600 hover:border-brand-blue hover:text-brand-blue'}`}
         >
           {option.label}
         </button>
@@ -104,10 +102,10 @@ const SearchPanel: React.FC<SearchPanelProps> = ({ onSearchSubmit }) => {
   const [bhkError, setBhkError] = useState<string>('');
 
   const bhkOptions = [
-    { value: '1', label: '🏠 1 BHK' },
-    { value: '2', label: '🏡 2 BHK' },
-    { value: '3', label: '🏢 3 BHK' },
-    { value: '4+', label: '🏰 4+ BHK' },
+    { value: '1', label: '1 BHK' },
+    { value: '2', label: '2 BHK' },
+    { value: '3', label: '3 BHK' },
+    { value: '4+', label: '4+ BHK' },
   ];
 
   const amenityOptions = [
@@ -186,10 +184,10 @@ const SearchPanel: React.FC<SearchPanelProps> = ({ onSearchSubmit }) => {
   };
 
   return (
-    <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-soft">
-      <div className="mb-8">
-        <h2 className="text-2xl font-black text-slate-900 tracking-tight">Market Filter</h2>
-        <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1">Refine your search parameters</p>
+    <div className="bg-white rounded-3xl p-10 border border-outline shadow-elevated">
+      <div className="mb-12">
+        <h2 className="text-3xl font-display font-black text-on-surface tracking-tighter">Filter Properties</h2>
+        <p className="text-slate-400 text-[10px] font-bold uppercase tracking-[0.25em] mt-3">Refine your search parameters</p>
       </div>
 
       <InputField
@@ -198,7 +196,7 @@ const SearchPanel: React.FC<SearchPanelProps> = ({ onSearchSubmit }) => {
         type="number"
         value={budget}
         onChange={(e) => setBudget(e.target.value)}
-        placeholder={'e.g., 85,00,000'}
+        placeholder={'85,00,000'}
         error={budgetError}
         icon={Banknote}
       />
@@ -209,7 +207,7 @@ const SearchPanel: React.FC<SearchPanelProps> = ({ onSearchSubmit }) => {
         type="number"
         value={area}
         onChange={(e) => setArea(e.target.value)}
-        placeholder={'e.g., 1450'}
+        placeholder={'1450'}
         error={areaError}
         icon={Maximize}
       />
@@ -221,7 +219,7 @@ const SearchPanel: React.FC<SearchPanelProps> = ({ onSearchSubmit }) => {
         onChange={handleBhkChange}
         icon={Home}
       />
-      {bhkError && <p className="mt-[-20px] mb-6 text-[10px] font-bold text-brand-rose uppercase px-1">{bhkError}</p>}
+      {bhkError && <p className="mt-[-28px] mb-8 text-[9px] font-bold text-brand-rose uppercase tracking-widest px-1">{bhkError}</p>}
 
       <CheckboxGroup
         label="Select Perks"
@@ -231,17 +229,17 @@ const SearchPanel: React.FC<SearchPanelProps> = ({ onSearchSubmit }) => {
         icon={Zap}
       />
 
-      {apiError && <p className="mb-6 text-[10px] font-bold text-brand-rose uppercase text-center">{apiError}</p>}
+      {apiError && <p className="mb-8 text-[9px] font-bold text-brand-rose uppercase text-center">{apiError}</p>}
 
       <button
         onClick={handleProceed}
-        className="group relative w-full bg-slate-900 text-white h-16 rounded-2xl font-black text-sm uppercase tracking-widest
-                   hover:bg-brand-blue transition-all duration-500 overflow-hidden active:scale-95 disabled:opacity-50"
+        className="group relative w-full bg-on-surface text-white h-20 rounded-2xl font-black text-[12px] uppercase tracking-[0.2em]
+                   hover:bg-brand-blue transition-all duration-700 overflow-hidden active:scale-[0.98] disabled:opacity-50"
         disabled={loading}
       >
-        <span className={`flex items-center justify-center gap-3 ${loading ? 'opacity-0' : 'opacity-100'} transition-opacity`}>
+        <span className={`flex items-center justify-center gap-4 ${loading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}>
           Execute Analysis
-          <div className="w-1.5 h-1.5 bg-brand-blue group-hover:bg-white rounded-full"></div>
+          <div className="w-1.5 h-1.5 bg-brand-blue group-hover:bg-white rounded-full transition-colors duration-300"></div>
         </span>
         {loading && (
           <div className="absolute inset-0 flex items-center justify-center">

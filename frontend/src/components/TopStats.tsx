@@ -18,20 +18,19 @@ interface StatCardProps {
 }
 
 const StatCard = ({ title, value, subtext, icon: Icon, colorClass, delayClass }: any) => (
-  <div className={`bento-card p-6 shadow-hover-trigger flex flex-col justify-between h-full bg-white animate-reveal-up ${delayClass}`}>
-    <div className="flex justify-between items-start mb-4">
-      <div className={`p-2.5 rounded-xl ${colorClass} bg-opacity-10`}>
-        <Icon className={`w-5 h-5 ${colorClass.replace('bg-', 'text-')}`} />
+  <div className={`bg-white p-8 rounded-3xl border border-outline shadow-sm hover:shadow-lg transition-all duration-700 animate-reveal-up ${delayClass}`}>
+    <div className="flex items-center justify-between mb-8">
+      <div className="p-3 rounded-2xl bg-surface border border-outline">
+        <Icon className="w-5 h-5 text-brand-blue" />
       </div>
-      <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Market Metric</span>
+      <span className="text-[9px] font-bold text-slate-300 uppercase tracking-[0.25em]">{title}</span>
     </div>
 
     <div>
-      <h3 className="font-display text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">{title}</h3>
-      <p className="text-2xl font-black text-on-surface tracking-tight leading-none mb-2">
+      <p className="text-4xl font-display font-black text-on-surface tracking-tighter mb-3">
         {value}
       </p>
-      <p className="text-slate-500 text-[11px] font-medium line-clamp-1">
+      <p className="text-slate-400 text-[11px] font-bold uppercase tracking-[0.1em]">
         {subtext}
       </p>
     </div>
@@ -41,13 +40,13 @@ const StatCard = ({ title, value, subtext, icon: Icon, colorClass, delayClass }:
 
 const TopStats: React.FC<TopStatsProps> = ({ averagePrice, cheapestArea, premiumArea, bestROI }) => {
   return (
-    <div className="grid grid-cols-1 gap-4">
+    <div className="grid grid-cols-1 gap-6">
       <StatCard
         title="Avg. Market Price"
         value={`₹${(averagePrice / 100000).toFixed(1)}L`}
         subtext="Estimated city-wide baseline"
         icon={BarChart3}
-        colorClass="bg-brand-blue"
+        colorClass="text-brand-blue"
         delayClass="stagger-1"
       />
       <StatCard
@@ -55,7 +54,7 @@ const TopStats: React.FC<TopStatsProps> = ({ averagePrice, cheapestArea, premium
         value={cheapestArea.name}
         subtext={`Available from ₹${(cheapestArea.price / 100000).toFixed(1)}L`}
         icon={Coins}
-        colorClass="bg-brand-emerald"
+        colorClass="text-brand-emerald"
         delayClass="stagger-2"
       />
       <StatCard
@@ -63,15 +62,15 @@ const TopStats: React.FC<TopStatsProps> = ({ averagePrice, cheapestArea, premium
         value={premiumArea.name}
         subtext={`Peak valuations at ₹${(premiumArea.price / 10000000).toFixed(1)}Cr`}
         icon={Crown}
-        colorClass="bg-brand-indigo"
+        colorClass="text-brand-indigo"
         delayClass="stagger-3"
       />
       <StatCard
         title="Yield Potential"
         value={bestROI.name}
-        subtext={`Score: ${Math.round(bestROI.score)} based on metrics`}
+        subtext={`Score: ${Math.round(bestROI.score)} / 100`}
         icon={TrendingUp}
-        colorClass="bg-brand-rose"
+        colorClass="text-brand-rose"
         delayClass="stagger-4"
       />
     </div>

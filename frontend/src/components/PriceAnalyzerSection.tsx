@@ -1,14 +1,43 @@
 // frontend/src/components/PriceAnalyzerSection.tsx
+
 import { useState } from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { Activity, ArrowRightCircle, Sparkles, AlertCircle, TrendingUp } from 'lucide-react';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  Cell
+} from 'recharts';
+
+import {
+  Activity,
+  Sparkles,
+  AlertCircle,
+  TrendingUp
+} from 'lucide-react';
 
 const BANGALORE_LOCATIONS = [
-    'Indiranagar', 'HSR Layout', 'Whitefield', 'Jayanagar', 'Koramangala',
-    'Electronic City', 'Sarjapur', 'Bannerghatta', 'Marathahalli', 'Hebbal'
+  'Indiranagar',
+  'HSR Layout',
+  'Whitefield',
+  'Jayanagar',
+  'Koramangala',
+  'Electronic City',
+  'Sarjapur',
+  'Bannerghatta',
+  'Marathahalli',
+  'Hebbal'
 ];
 
-export const PriceAnalyzerSection = ({ onResult }: { onResult: (res: React.ReactNode) => void }) => {
+interface PriceAnalyzerSectionProps {
+  onResult: (type: 'investment' | 'price', res: React.ReactNode) => void;
+}
+
+export const PriceAnalyzerSection = ({
+  onResult
+}: PriceAnalyzerSectionProps) => {
   const [location, setLocation] = useState(BANGALORE_LOCATIONS[0]);
   const [price, setPrice] = useState('');
   const [area, setArea] = useState('');
@@ -16,63 +45,144 @@ export const PriceAnalyzerSection = ({ onResult }: { onResult: (res: React.React
   const analyze = () => {
     const p = parseFloat(price);
     const a = parseFloat(area);
+
     if (!p || !a || a <= 0) return;
 
     const propertyRate = p / a;
     const areaAvgRate = 5000;
-    
+
     let status = 'Fairly Priced';
-    let recommendation = 'This property is priced competitively within the market range.';
+    let recommendation =
+      'This property is priced competitively within the market range.';
 
     if (propertyRate < areaAvgRate * 0.85) {
-        status = 'Undervalued';
-        recommendation = 'This property is priced attractively. Potential for high ROI.';
+      status = 'Undervalued';
+      recommendation =
+        'This property is priced attractively. Potential for high ROI.';
     } else if (propertyRate > areaAvgRate * 1.15) {
-        status = 'Overpriced';
-        recommendation = `This property is trading at a premium. Ensure unique amenities justify the cost, or consider locations like Whitefield.`;
+      status = 'Overpriced';
+      recommendation =
+        'This property is trading at a premium. Ensure unique amenities justify the cost.';
     }
 
-    onResult(
-        <div className="grid md:grid-cols-2 gap-8 animate-in fade-in">
-            <div className={`p-8 rounded-3xl border border-slate-700 flex flex-col justify-center ${status === 'Overpriced' ? 'bg-red-950' : 'bg-green-950'}`}>
-                <h3 className={`text-5xl font-black ${status === 'Overpriced' ? 'text-red-400' : 'text-green-400'}`}>{status}</h3>
-                <p className="mt-4 text-slate-300 font-medium">Market diagnostic for {location}</p>
-                {status === 'Overpriced' ? <AlertCircle size={64} className="text-red-500 mt-6"/> : <Sparkles size={64} className="text-green-500 mt-6"/>}
-            </div>
+    onResult('price',
+      <>
+        {/* STATUS CARD */}
+        <div
+          className={`p-10 rounded-3xl border flex flex-col justify-center shadow-sm ${
+            status === 'Overpriced'
+              ? 'bg-red-50 border-red-100'
+              : 'bg-surface border-outline'
+          }`}
+        >
+          <h3
+            className={`text-6xl font-display font-black tracking-tighter ${
+              status === 'Overpriced' ? 'text-red-600' : 'text-brand-emerald'
+            }`}
+          >
+            {status}
+          </h3>
 
-            <div className="bg-slate-900 p-8 rounded-3xl border border-slate-700">
-                <h4 className="flex items-center gap-2 font-black text-white mb-8"><TrendingUp size={20} className="text-teal-400"/> Value Comparison</h4>
-                <div className="h-48">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={[{name: 'Property', val: propertyRate}, {name: 'Market', val: areaAvgRate}]} layout="vertical" margin={{left: 20}}>
-                            <XAxis type="number" hide />
-                            <YAxis dataKey="name" type="category" tick={{fill: '#94a3b8', fontWeight: 'bold'}} />
-                            <Tooltip contentStyle={{backgroundColor: '#1e293b'}} />
-                            <Bar dataKey="val" radius={[0, 8, 8, 0]} barSize={40}>
-                                <Cell fill={status === 'Overpriced' ? '#ef4444' : '#22c55e'} />
-                                <Cell fill="#64748b" />
-                            </Bar>
-                        </BarChart>
-                    </ResponsiveContainer>
-                </div>
-                <p className="text-slate-400 text-sm mt-6 leading-relaxed italic border-l-4 border-teal-500 pl-4">
-                    {recommendation}
-                </p>
-            </div>
+          <p className="mt-8 text-on-surface text-lg font-medium">
+            Market diagnostic for {location}
+          </p>
+
+          <div className="mt-12">
+            {status === 'Overpriced' ? (
+              <AlertCircle size={80} className="text-red-400" />
+            ) : (
+              <Sparkles size={80} className="text-brand-emerald" />
+            )}
+          </div>
         </div>
+
+        {/* CHART CARD */}
+        <div className="bg-white p-10 rounded-3xl border border-outline shadow-sm">
+          <h4 className="flex items-center gap-3 font-display font-black text-on-surface mb-12 text-sm uppercase tracking-[0.2em]">
+            <TrendingUp size={20} className="text-brand-blue" />
+            Value Comparison
+          </h4>
+
+          <div className="h-64 mb-10">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={[
+                  { name: 'Property', val: propertyRate },
+                  { name: 'Market', val: areaAvgRate }
+                ]}
+                layout="vertical"
+                margin={{ left: 20 }}
+              >
+                <XAxis type="number" hide />
+                <YAxis
+                  dataKey="name"
+                  type="category"
+                  tick={{ fill: '#64748b', fontSize: 13, fontWeight: 'bold' }}
+                />
+                <Tooltip contentStyle={{backgroundColor: '#0f172a', border: 'none', borderRadius: '16px', color: '#fff'}} />
+
+                <Bar dataKey="val" radius={[0, 12, 12, 0]} barSize={40}>
+                  <Cell
+                    fill={
+                      status === 'Overpriced' ? '#dc2626' : '#10b981'
+                    }
+                  />
+                  <Cell fill="#cbd5e1" />
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="border-l-4 border-brand-blue pl-6 py-2">
+            <p className="text-brand-blue font-black uppercase text-[10px] tracking-[0.2em] mb-2">Rationale</p>
+            <p className="text-slate-500 text-sm leading-relaxed italic">
+              {recommendation} The property is priced at <strong>₹{Math.round(propertyRate).toLocaleString()}/sqft</strong>, 
+              {status === 'Overpriced' ? ' which is significantly higher' : status === 'Undervalued' ? ' which is significantly lower' : ' which is aligned'} 
+              than the regional average of <strong>₹{areaAvgRate.toLocaleString()}/sqft</strong>.
+            </p>
+          </div>
+        </div>
+      </>
     );
   };
 
   return (
     <div className="space-y-4">
-        <select value={location} onChange={(e) => setLocation(e.target.value)} className="w-full p-3 border rounded-xl bg-white">
-          {BANGALORE_LOCATIONS.map(loc => <option key={loc} value={loc}>{loc}</option>)}
-        </select>
-        <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="Price (INR)" className="w-full p-3 border rounded-xl" />
-        <input type="number" value={area} onChange={(e) => setArea(e.target.value)} placeholder="Area (sqft)" className="w-full p-3 border rounded-xl" />
-        <button onClick={analyze} className="w-full bg-teal-600 text-white py-3 rounded-xl hover:bg-teal-700 transition font-bold uppercase tracking-widest text-sm flex items-center justify-center gap-2">
-            <Activity size={18} /> Run Diagnostic
-        </button>
+      <select
+        value={location}
+        onChange={(e) => setLocation(e.target.value)}
+        className="w-full p-4 border border-outline rounded-2xl bg-white"
+      >
+        {BANGALORE_LOCATIONS.map((loc) => (
+          <option key={loc} value={loc}>
+            {loc}
+          </option>
+        ))}
+      </select>
+
+      <input
+        type="number"
+        value={price}
+        onChange={(e) => setPrice(e.target.value)}
+        placeholder="Price (INR)"
+        className="w-full p-4 border border-outline rounded-2xl"
+      />
+
+      <input
+        type="number"
+        value={area}
+        onChange={(e) => setArea(e.target.value)}
+        placeholder="Area (sqft)"
+        className="w-full p-4 border border-outline rounded-2xl"
+      />
+
+      <button
+        onClick={analyze}
+        className="w-full bg-brand-blue text-white py-4 rounded-2xl hover:bg-indigo-700 transition font-bold uppercase tracking-[0.2em] text-xs flex items-center justify-center gap-2"
+      >
+        <Activity size={18} />
+        Run Diagnostic
+      </button>
     </div>
   );
 };
